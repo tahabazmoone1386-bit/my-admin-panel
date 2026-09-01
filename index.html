@@ -7,25 +7,35 @@
 
 <style>
 *{box-sizing:border-box}
+
 body{
     margin:0;
     font-family:Tahoma,Arial,sans-serif;
     background:#0f172a;
     color:#fff;
 }
+
 .container{
     max-width:900px;
     margin:auto;
     padding:20px;
 }
+
 .header{
     background:#1e293b;
     padding:20px;
     border-radius:18px;
     margin-bottom:20px;
 }
-.header h1{margin:0 0 8px}
-.header p{color:#94a3b8;margin:0}
+
+.header h1{
+    margin:0 0 8px;
+}
+
+.header p{
+    color:#94a3b8;
+    margin:0;
+}
 
 .card{
     background:#1e293b;
@@ -33,6 +43,7 @@ body{
     border-radius:18px;
     margin-bottom:20px;
 }
+
 input,select,textarea{
     width:100%;
     padding:13px;
@@ -43,22 +54,36 @@ input,select,textarea{
     color:white;
     font-size:15px;
 }
+
 textarea{
-    min-height:120px;
+    min-height:130px;
     resize:vertical;
     direction:ltr;
 }
+
 button{
     border:0;
     border-radius:10px;
-    padding:12px 18px;
+    padding:11px 16px;
     cursor:pointer;
     font-size:14px;
     margin:4px;
 }
-.add{background:#22c55e;color:white}
-.copy{background:#3b82f6;color:white}
-.delete{background:#ef4444;color:white}
+
+.add{
+    background:#22c55e;
+    color:white;
+}
+
+.copy{
+    background:#3b82f6;
+    color:white;
+}
+
+.delete{
+    background:#ef4444;
+    color:white;
+}
 
 .config{
     background:#0f172a;
@@ -67,33 +92,50 @@ button{
     padding:15px;
     margin-top:12px;
 }
+
 .config-title{
     font-size:17px;
     font-weight:bold;
 }
+
 .type{
     color:#38bdf8;
     font-size:13px;
     margin:7px 0;
 }
+
 .config-text{
     background:#020617;
     padding:10px;
     border-radius:8px;
     direction:ltr;
+    text-align:left;
     word-break:break-all;
     color:#cbd5e1;
     font-size:12px;
-    max-height:100px;
+    max-height:120px;
     overflow:auto;
+    white-space:pre-wrap;
 }
+
 .search{
     margin-bottom:15px;
 }
+
 .empty{
     text-align:center;
     color:#94a3b8;
     padding:20px;
+}
+
+.actions{
+    margin-top:8px;
+}
+
+.count{
+    color:#94a3b8;
+    font-size:13px;
+    margin-bottom:10px;
 }
 </style>
 </head>
@@ -103,39 +145,52 @@ button{
 <div class="container">
 
 <div class="header">
-<h1>⚙️ پنل مدیریت کانفیگ</h1>
-<p>مدیریت کانفیگ‌های شخصی</p>
+    <h1>⚙️ پنل مدیریت کانفیگ</h1>
+    <p>مدیریت کانفیگ‌های شخصی</p>
 </div>
 
 <div class="card">
 
-<h2>➕ افزودن کانفیگ</h2>
+    <h2>➕ افزودن کانفیگ</h2>
 
-<input id="name" placeholder="نام کانفیگ">
+    <input
+        id="name"
+        placeholder="نام کانفیگ"
+    >
 
-<select id="type">
-<option value="VLESS">VLESS</option>
-<option value="VMESS">VMESS</option>
-<option value="Trojan">Trojan</option>
-<option value="Shadowsocks">Shadowsocks</option>
-<option value="Other">سایر</option>
-</select>
+    <select id="type">
+        <option value="VLESS">VLESS</option>
+        <option value="VMESS">VMESS</option>
+        <option value="Trojan">Trojan</option>
+        <option value="Shadowsocks">Shadowsocks</option>
+        <option value="Other">سایر</option>
+    </select>
 
-<textarea id="configText" placeholder="کانفیگ را اینجا وارد کنید"></textarea>
+    <textarea
+        id="configText"
+        placeholder="کانفیگ را اینجا وارد کنید"
+    ></textarea>
 
-<button class="add" onclick="addConfig()">افزودن کانفیگ</button>
+    <button class="add" onclick="addConfig()">
+        ➕ افزودن کانفیگ
+    </button>
 
 </div>
 
 <div class="card">
 
-<h2>📋 کانفیگ‌ها</h2>
+    <h2>📋 کانفیگ‌ها</h2>
 
-<input class="search" id="search"
-placeholder="🔎 جستجوی کانفیگ..."
-oninput="showConfigs()">
+    <div id="count" class="count"></div>
 
-<div id="configs"></div>
+    <input
+        class="search"
+        id="search"
+        placeholder="🔎 جستجوی کانفیگ..."
+        oninput="showConfigs()"
+    >
+
+    <div id="configs"></div>
 
 </div>
 
@@ -143,12 +198,207 @@ oninput="showConfigs()">
 
 <script>
 
-let configs = JSON.parse(localStorage.getItem("myConfigs")) || [];
+let configs = JSON.parse(
+    localStorage.getItem("myConfigs")
+) || [];
+
 
 function save(){
-    localStorage.setItem("myConfigs", JSON.stringify(configs));
+    localStorage.setItem(
+        "myConfigs",
+        JSON.stringify(configs)
+    );
 }
+
 
 function addConfig(){
 
-    const name = document.getElementById("name").value.trim
+    const name =
+        document.getElementById("name").value.trim();
+
+    const type =
+        document.getElementById("type").value;
+
+    const configText =
+        document.getElementById("configText").value.trim();
+
+
+    if(!name){
+        alert("لطفاً نام کانفیگ را وارد کنید.");
+        return;
+    }
+
+
+    if(!configText){
+        alert("لطفاً متن کانفیگ را وارد کنید.");
+        return;
+    }
+
+
+    const newConfig = {
+        id: Date.now(),
+        name: name,
+        type: type,
+        text: configText
+    };
+
+
+    configs.unshift(newConfig);
+
+    save();
+
+    document.getElementById("name").value = "";
+    document.getElementById("configText").value = "";
+
+    showConfigs();
+
+    alert("✅ کانفیگ با موفقیت اضافه شد.");
+}
+
+
+function deleteConfig(id){
+
+    const confirmDelete =
+        confirm("آیا از حذف این کانفیگ مطمئن هستید؟");
+
+    if(!confirmDelete){
+        return;
+    }
+
+
+    configs = configs.filter(
+        config => config.id !== id
+    );
+
+    save();
+
+    showConfigs();
+}
+
+
+function copyConfig(text){
+
+    navigator.clipboard.writeText(text)
+        .then(() => {
+            alert("✅ کانفیگ کپی شد.");
+        })
+        .catch(() => {
+
+            const temp =
+                document.createElement("textarea");
+
+            temp.value = text;
+
+            document.body.appendChild(temp);
+
+            temp.select();
+
+            document.execCommand("copy");
+
+            temp.remove();
+
+            alert("✅ کانفیگ کپی شد.");
+        });
+}
+
+
+function showConfigs(){
+
+    const container =
+        document.getElementById("configs");
+
+    const search =
+        document.getElementById("search")
+        .value
+        .toLowerCase()
+        .trim();
+
+
+    const filtered =
+        configs.filter(config =>
+            config.name.toLowerCase().includes(search) ||
+            config.type.toLowerCase().includes(search) ||
+            config.text.toLowerCase().includes(search)
+        );
+
+
+    document.getElementById("count").innerText =
+        "تعداد کانفیگ‌ها: " + configs.length;
+
+
+    if(filtered.length === 0){
+
+        container.innerHTML =
+            '<div class="empty">📭 کانفیگی پیدا نشد</div>';
+
+        return;
+    }
+
+
+    container.innerHTML = "";
+
+
+    filtered.forEach(config => {
+
+        const div =
+            document.createElement("div");
+
+        div.className = "config";
+
+
+        div.innerHTML = `
+            <div class="config-title">
+                ${escapeHTML(config.name)}
+            </div>
+
+            <div class="type">
+                نوع: ${escapeHTML(config.type)}
+            </div>
+
+            <div class="config-text">
+                ${escapeHTML(config.text)}
+            </div>
+
+            <div class="actions">
+
+                <button
+                    class="copy"
+                    onclick="copyConfig(${JSON.stringify(config.text)})"
+                >
+                    📋 کپی
+                </button>
+
+                <button
+                    class="delete"
+                    onclick="deleteConfig(${config.id})"
+                >
+                    🗑️ حذف
+                </button>
+
+            </div>
+        `;
+
+
+        container.appendChild(div);
+
+    });
+}
+
+
+function escapeHTML(text){
+
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+showConfigs();
+
+</script>
+
+</body>
+</html>
