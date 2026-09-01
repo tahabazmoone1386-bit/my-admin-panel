@@ -1,12 +1,154 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>پنل مدیریت</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>پنل مدیریت کانفیگ</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+    margin:0;
+    font-family:Tahoma,Arial,sans-serif;
+    background:#0f172a;
+    color:#fff;
+}
+.container{
+    max-width:900px;
+    margin:auto;
+    padding:20px;
+}
+.header{
+    background:#1e293b;
+    padding:20px;
+    border-radius:18px;
+    margin-bottom:20px;
+}
+.header h1{margin:0 0 8px}
+.header p{color:#94a3b8;margin:0}
+
+.card{
+    background:#1e293b;
+    padding:20px;
+    border-radius:18px;
+    margin-bottom:20px;
+}
+input,select,textarea{
+    width:100%;
+    padding:13px;
+    margin:8px 0 14px;
+    border:1px solid #334155;
+    border-radius:10px;
+    background:#0f172a;
+    color:white;
+    font-size:15px;
+}
+textarea{
+    min-height:120px;
+    resize:vertical;
+    direction:ltr;
+}
+button{
+    border:0;
+    border-radius:10px;
+    padding:12px 18px;
+    cursor:pointer;
+    font-size:14px;
+    margin:4px;
+}
+.add{background:#22c55e;color:white}
+.copy{background:#3b82f6;color:white}
+.delete{background:#ef4444;color:white}
+
+.config{
+    background:#0f172a;
+    border:1px solid #334155;
+    border-radius:14px;
+    padding:15px;
+    margin-top:12px;
+}
+.config-title{
+    font-size:17px;
+    font-weight:bold;
+}
+.type{
+    color:#38bdf8;
+    font-size:13px;
+    margin:7px 0;
+}
+.config-text{
+    background:#020617;
+    padding:10px;
+    border-radius:8px;
+    direction:ltr;
+    word-break:break-all;
+    color:#cbd5e1;
+    font-size:12px;
+    max-height:100px;
+    overflow:auto;
+}
+.search{
+    margin-bottom:15px;
+}
+.empty{
+    text-align:center;
+    color:#94a3b8;
+    padding:20px;
+}
+</style>
 </head>
+
 <body>
-  <h1>پنل مدیریت من</h1>
-  <p>پنل با موفقیت ساخته شد ✅</p>
-</body>
-</html>
+
+<div class="container">
+
+<div class="header">
+<h1>⚙️ پنل مدیریت کانفیگ</h1>
+<p>مدیریت کانفیگ‌های شخصی</p>
+</div>
+
+<div class="card">
+
+<h2>➕ افزودن کانفیگ</h2>
+
+<input id="name" placeholder="نام کانفیگ">
+
+<select id="type">
+<option value="VLESS">VLESS</option>
+<option value="VMESS">VMESS</option>
+<option value="Trojan">Trojan</option>
+<option value="Shadowsocks">Shadowsocks</option>
+<option value="Other">سایر</option>
+</select>
+
+<textarea id="configText" placeholder="کانفیگ را اینجا وارد کنید"></textarea>
+
+<button class="add" onclick="addConfig()">افزودن کانفیگ</button>
+
+</div>
+
+<div class="card">
+
+<h2>📋 کانفیگ‌ها</h2>
+
+<input class="search" id="search"
+placeholder="🔎 جستجوی کانفیگ..."
+oninput="showConfigs()">
+
+<div id="configs"></div>
+
+</div>
+
+</div>
+
+<script>
+
+let configs = JSON.parse(localStorage.getItem("myConfigs")) || [];
+
+function save(){
+    localStorage.setItem("myConfigs", JSON.stringify(configs));
+}
+
+function addConfig(){
+
+    const name = document.getElementById("name").value.trim
